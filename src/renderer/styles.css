@@ -1,0 +1,22 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Segoe UI, sans-serif; background: #1e1f22; color: #ddd; }
+.app { display: flex; height: 100vh; }
+nav { width: 110px; background: #111214; display: flex; flex-direction: column; }
+nav button { background: none; border: 0; color: #aaa; padding: 14px; text-transform: capitalize; cursor: pointer; }
+nav button.active { color: #fff; background: #2b2d31; }
+main { flex: 1; min-width: 0; }
+.split { display: flex; height: 100%; }
+.list { list-style: none; margin: 0; padding: 0; overflow: auto; }
+.split .list { width: 280px; border-right: 1px solid #333; }
+.list li { padding: 10px 14px; cursor: pointer; }
+.list li.active { background: #2b2d31; }
+.muted { color: #888; } .err { color: #f66; }
+.conv { flex: 1; display: flex; flex-direction: column; }
+.msgs { flex: 1; overflow: auto; padding: 12px; }
+.msg { max-width: 70%; margin: 6px 0; padding: 6px 10px; background: #2b2d31; border-radius: 8px; }
+.msg.out { margin-left: auto; background: #3a5fcd; }
+.conv form { display: flex; gap: 8px; padding: 10px; }
+input { flex: 1; padding: 8px; background: #2b2d31; border: 1px solid #444; color: #ddd; border-radius: 4px; }
+button { padding: 6px 12px; cursor: pointer; }
+.page { padding: 20px; overflow: auto; height: 100%; }
+.row { display: flex; gap: 8px; margin: 10px 0; }
