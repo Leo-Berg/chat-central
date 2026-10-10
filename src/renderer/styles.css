@@ -20,3 +20,4 @@ input { flex: 1; padding: 8px; background: #2b2d31; border: 1px solid #444; colo
 button { padding: 6px 12px; cursor: pointer; }
 .page { padding: 20px; overflow: auto; height: 100%; }
 .row { display: flex; gap: 8px; margin: 10px 0; }
+select { background:#2b2d31; color:#ddd; border:1px solid #444; border-radius:4px; }

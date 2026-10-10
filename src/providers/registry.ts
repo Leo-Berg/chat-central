@@ -1,9 +1,12 @@
 import type { Provider, ProviderId } from "../core/types";
 import { MatrixProvider } from "./matrix";
+import { DiscordProvider } from "./discord";
+import { TelegramProvider } from "./telegram";
 
 const factories: Partial<Record<ProviderId, () => Provider>> = {
   matrix: () => new MatrixProvider(),
-  // telegram, discord: planned
+  telegram: () => new TelegramProvider(),
+  discord: () => new DiscordProvider(),
 };
 
 export function createProvider(id: ProviderId): Provider {

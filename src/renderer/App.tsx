@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "./api";
-import type { Account, Contact, Conversation, Message } from "../core/types";
+import type { Account, Contact, Conversation, Message, ProviderId } from "../core/types";
 
 export function App() {
   const [tab, setTab] = useState<"chats" | "contacts" | "accounts">("chats");
@@ -107,18 +107,29 @@ function Contacts() {
   );
 }
 
+const FIELDS: Record<ProviderId, { key: string; label: string; secret?: boolean; def?: string }[]> = {
+  matrix: [
+    { key: "homeserver", label: "Homeserver URL", def: "https://matrix.org" },
+    { key: "accessToken", label: "Access token", secret: true },
+  ],
+  telegram: [{ key: "botToken", label: "Bot token (from @BotFather)", secret: true }],
+  discord: [{ key: "botToken", label: "Bot token", secret: true }],
+};
+
 function Accounts() {
   const [list, setList] = useState<Account[]>([]);
-  const [homeserver, setHs] = useState("https://matrix.org");
-  const [accessToken, setTok] = useState("");
+  const [provider, setProvider] = useState<ProviderId>("matrix");
+  const [values, setValues] = useState<Record<string, string>>({});
   const [err, setErr] = useState("");
   const refresh = () => api.accounts().then(setList);
   useEffect(() => { refresh(); }, []);
+  const fields = FIELDS[provider];
+  const val = (f: (typeof fields)[number]) => values[f.key] ?? f.def ?? "";
   const add = async () => {
     setErr("");
     try {
-      await api.addAccount("matrix", { homeserver, accessToken });
-      setTok("");
+      await api.addAccount(provider, Object.fromEntries(fields.map((f) => [f.key, val(f)])));
+      setValues({});
       refresh();
     } catch (e) { setErr(String(e)); }
   };
@@ -132,14 +143,26 @@ function Accounts() {
           </li>
         ))}
       </ul>
-      <h3>Add Matrix account</h3>
+      <h3>Add account</h3>
       <form className="row" onSubmit={(e) => { e.preventDefault(); add(); }}>
-        <input value={homeserver} onChange={(e) => setHs(e.target.value)} placeholder="Homeserver URL" />
-        <input type="password" value={accessToken} onChange={(e) => setTok(e.target.value)} placeholder="Access token" />
+        <select value={provider} onChange={(e) => { setProvider(e.target.value as ProviderId); setValues({}); }}>
+          <option value="matrix">Matrix</option>
+          <option value="telegram">Telegram (bot)</option>
+          <option value="discord">Discord (bot)</option>
+        </select>
+        {fields.map((f) => (
+          <input
+            key={f.key}
+            type={f.secret ? "password" : "text"}
+            placeholder={f.label}
+            value={val(f)}
+            onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
+          />
+        ))}
         <button>Connect</button>
       </form>
       {err && <p className="err">{err}</p>}
-      <p className="muted">Telegram and Discord are planned.</p>
+      <p className="muted">Telegram/Discord use bots: they only see chats and servers the bot has been added to or messaged in.</p>
     </div>
   );
 }
